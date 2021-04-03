@@ -1,4 +1,4 @@
-package com.riady.scanner;
+package com.riady.scannerlib;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

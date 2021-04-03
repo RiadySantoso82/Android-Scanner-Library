@@ -1,9 +1,4 @@
-package com.riady.scanner;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
+package com.riady.scannerlib;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +7,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -110,36 +110,35 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.menu_flash:
-                mFlash = !mFlash;
-                if(mFlash) {
-                    item.setTitle("Flash [ON]");
-                } else {
-                    item.setTitle("Flash [OFF]");
-                }
-                mScannerView.setFlash(mFlash);
-                return true;
-            case R.id.menu_auto_focus:
-                mAutoFocus = !mAutoFocus;
-                if(mAutoFocus) {
-                    item.setTitle("Auto Focus [ON]");
-                } else {
-                    item.setTitle("Auto Focus [OFF]");
-                }
-                mScannerView.setAutoFocus(mAutoFocus);
-                return true;
-            case R.id.menu_camera_selector:
-                mScannerView.stopCamera();
-                DialogFragment cFragment = CameraSelectorDialogFragment.newInstance(this, mCameraId);
-                cFragment.show(getSupportFragmentManager(), "camera_selector");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.menu_flash) {
+            mFlash = !mFlash;
+            if (mFlash) {
+                item.setTitle("Flash [ON]");
+            } else {
+                item.setTitle("Flash [OFF]");
+            }
+            mScannerView.setFlash(mFlash);
+            return true;
+        } else if (itemId == R.id.menu_auto_focus) {
+            mAutoFocus = !mAutoFocus;
+            if (mAutoFocus) {
+                item.setTitle("Auto Focus [ON]");
+            } else {
+                item.setTitle("Auto Focus [OFF]");
+            }
+            mScannerView.setAutoFocus(mAutoFocus);
+            return true;
+        } else if (itemId == R.id.menu_camera_selector) {
+            mScannerView.stopCamera();
+            DialogFragment cFragment = CameraSelectorDialogFragment.newInstance(this, mCameraId);
+            cFragment.show(getSupportFragmentManager(), "camera_selector");
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public void closeMessageDialog() {
