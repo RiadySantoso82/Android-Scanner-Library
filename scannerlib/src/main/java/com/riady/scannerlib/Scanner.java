@@ -223,7 +223,7 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
             }
         }
     }
-    
+
     private void requestStoragePermission() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED){
             ///method to get Images
