@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.riady.scannerlib.CameraSelectorDialogFragment;
+import com.riady.scannerlib.FormatSelectorDialogFragment;
 import com.riady.scannerlib.MessageDialogFragment;
 
 import java.util.ArrayList;
@@ -24,7 +26,8 @@ import java.util.List;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class Scanner extends AppCompatActivity implements MessageDialogFragment.MessageDialogListener,
-        ZXingScannerView.ResultHandler, CameraSelectorDialogFragment.CameraSelectorDialogListener {
+        ZXingScannerView.ResultHandler, CameraSelectorDialogFragment.CameraSelectorDialogListener,
+        FormatSelectorDialogFragment.FormatSelectorDialogListener {
 
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
@@ -106,6 +109,9 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
         }
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_NEVER);
 
+        menuItem = menu.add(Menu.NONE, R.id.menu_formats, 0, "Formats");
+        MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_NEVER);
+
         menuItem = menu.add(Menu.NONE, R.id.menu_camera_selector, 0, "Select a Camera");
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_NEVER);
 
@@ -136,6 +142,10 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
                     item.setTitle("Auto Focus [OFF]");
                 }
                 mScannerView.setAutoFocus(mAutoFocus);
+                return true;
+            case R.id.menu_formats:
+                DialogFragment fragment = FormatSelectorDialogFragment.newInstance(this, mSelectedIndices);
+                fragment.show(getSupportFragmentManager(), "format_selector");
                 return true;
             case R.id.menu_camera_selector:
                 mScannerView.stopCamera();
@@ -175,6 +185,12 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
     }
 
     @Override
+    public void onFormatsSaved(ArrayList<Integer> selectedIndices) {
+        mSelectedIndices = selectedIndices;
+        setupFormats();
+    }
+
+    @Override
     public void onCameraSelected(int cameraId) {
         mCameraId = cameraId;
         mScannerView.startCamera(mCameraId);
@@ -184,9 +200,18 @@ public class Scanner extends AppCompatActivity implements MessageDialogFragment.
 
     public void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
+        if(mSelectedIndices == null || mSelectedIndices.isEmpty()) {
+            mSelectedIndices = new ArrayList<Integer>();
+            for(int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
+//                if (i == 10 || i == 11) {
+                    mSelectedIndices.add(i);
+//                }
+            }
+        }
 
-        formats.add(BarcodeFormat.PDF_417);
-        formats.add(BarcodeFormat.QR_CODE);
+        for(int index : mSelectedIndices) {
+            formats.add(ZXingScannerView.ALL_FORMATS.get(index));
+        }
         if(mScannerView != null) {
             mScannerView.setFormats(formats);
         }
