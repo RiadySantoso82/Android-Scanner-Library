@@ -13,9 +13,13 @@
 #}
 
 -keep class com.riady.scannerlib.CameraSelectorDialogFragment
--keep class com.riady.scannerlib.CameraSelectorDialogFragment.*
+-keepclassmembers class com.riady.scannerlib.CameraSelectorDialogFragment {
+    public *;
+}
 -keep class com.riady.scannerlib.MessageDialogFragment
--keep class com.riady.scannerlib.MessageDialogFragment.*
+-keepclassmembers class com.riady.scannerlib.MessageDialogFragment {
+    public *;
+}
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
